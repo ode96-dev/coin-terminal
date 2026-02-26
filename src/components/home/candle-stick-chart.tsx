@@ -14,13 +14,7 @@ import {
   IChartApi,
   ISeriesApi,
 } from "lightweight-charts";
-import {
-  startTransition,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 const CandleStickChart = ({
   children,
@@ -32,7 +26,6 @@ const CandleStickChart = ({
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
-  const [loading, setLoading] = useState(false);
   const [period, setPeriod] = useState(initialPeriod);
   const [ohlcData, setOhlcData] = useState<OHLCData[]>(data ?? []);
   const [isPending, setTransition] = useTransition();
@@ -56,7 +49,7 @@ const CandleStickChart = ({
   const handlePeriodChange = (newPeriod: Period) => {
     if (newPeriod === period) return;
 
-    startTransition(async () => {
+    setTransition(async () => {
       setPeriod(newPeriod);
       await fetchOHLCData(newPeriod);
     });
@@ -75,7 +68,18 @@ const CandleStickChart = ({
     });
     const series = chart.addSeries(CandlestickSeries, getCandlestickConfig());
 
-    series.setData(convertOHLCData(ohlcData));
+    const convertedToSeconds = ohlcData.map(
+      (item) =>
+        [
+          Math.floor(item[0] / 1000),
+          item[1],
+          item[2],
+          item[3],
+          item[4],
+        ] as OHLCData,
+    );
+
+    series.setData(convertOHLCData(convertedToSeconds));
     chart.timeScale().fitContent();
 
     chartRef.current = chart;
@@ -93,7 +97,7 @@ const CandleStickChart = ({
       chartRef.current = null;
       candleSeriesRef.current = null;
     };
-  }, [height]);
+  }, [height, period]);
 
   useEffect(() => {
     if (!candleSeriesRef.current) return;
@@ -129,7 +133,7 @@ const CandleStickChart = ({
               }
               onClick={() => handlePeriodChange(value)}
               key={value}
-              disabled={loading}
+              disabled={isPending}
             >
               {label}
             </button>
