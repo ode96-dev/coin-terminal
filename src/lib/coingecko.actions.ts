@@ -1,7 +1,7 @@
 'server-only'
 import qs from 'query-string';
 
-const BASE_URL = process.env.COINGECKO_BASE_URL
+const BASE_URL = process.env.COINGECKO_BASE_URL || "https://api.coingecko.com/api/v3"
 const API_KEY = process.env.COINGECKO_API_KEY as string
 
 if (!BASE_URL) throw new Error('Could not get the base url')
