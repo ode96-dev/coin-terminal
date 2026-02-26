@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   env: {
     COINGECKO_API_KEY: process.env.COINGECKO_API_KEY,
     NEXT_PUBLIC_COINGECKO_API_KEY: process.env.NEXT_PUBLIC_COINGECKO_API_KEY,
-    COINGECKO_BASE_URL: process.env.COINGECKO_BASE_URL
+    COINGECKO_BASE_URL: process.env.COINGECKO_BASE_URL,
   },
   images: {
     remotePatterns: [
