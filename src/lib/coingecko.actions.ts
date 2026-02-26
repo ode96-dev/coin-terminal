@@ -8,6 +8,15 @@ if (!BASE_URL) throw new Error('Could not get the base url')
 if (!API_KEY) throw new Error('Could not get the API_KEY')
 
 
+/**
+ * Fetches JSON from the configured API by calling the specified endpoint with optional query parameters.
+ *
+ * @param endpoint - Path appended to the configured BASE_URL (do not rely on leading/trailing slash).
+ * @param params - Optional query parameters to include; empty strings and `null` values are omitted.
+ * @param revalidate - Cache revalidation time in seconds applied to the request.
+ * @returns The parsed JSON response body as `T`.
+ * @throws Error if the HTTP response is not OK; the thrown message contains the status and API error detail.
+ */
 export async function fetcher<T>(
     endpoint: string,
     params?: QueryParams,
@@ -24,7 +33,7 @@ export async function fetcher<T>(
 
     const response = await fetch(url, {
         headers: {
-            "x-cg-pro-api-key": API_KEY,
+            "x-cg-demo-api-key": API_KEY,
             "Content-Type": "application/json"
         } as Record<string, string>,
         next: { revalidate }
@@ -33,10 +42,11 @@ export async function fetcher<T>(
     console.log("[response]", response)
 
     if (!response.ok) {
-        const errorBody: CoinGeckoErrorBody = await response.json().catch(() => ({}))
+        const errorBody = await response.json().catch(() => ({}));
+        // LOG THIS: It usually contains the specific reason (e.g., "invalid parameter")
+        console.error("CoinGecko API Error Detail:", errorBody);
 
-        throw new Error(`API Error: ${response.status}:${errorBody.error || response.statusText}`)
-
+        throw new Error(`API Error: ${response.status}:${errorBody.error || response.statusText}`);
     }
 
     return response.json()
