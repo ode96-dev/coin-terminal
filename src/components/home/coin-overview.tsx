@@ -1,8 +1,8 @@
 import { fetcher } from "@/lib/coingecko.actions";
 import { formatCurrency } from "@/lib/utils";
 import Image from "next/image";
-import CoinOverviewFallback from "../skeleton/src/components/skeletons/coin-overview-fallback";
 import CandleStickChart from "./candle-stick-chart";
+import CoinOverviewFallback from "../skeletons/coin-overview-fallback";
 
 const CoinOverview = async () => {
   let coin: CoinDetailsData | null = null;
